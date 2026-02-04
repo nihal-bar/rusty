@@ -408,12 +408,44 @@ public class PrettyPrinter implements Visitor {
 
     @Override
     public void performActionOnMatchExpression(MatchExpression x) {
+        layouter.keyWord("match").print(" ");
+        x.expr().visit(this);
+        layouter.print(" ");
+        layouter.print("{");
+        layouter.brk();
+        for (var arm : x.arms()) {
+            arm.visit(this);
+            layouter.print(",");
+            layouter.brk();
+        }
+        layouter.print("}");
+    }
 
+    @Override
+    public void performActionOnRelaxedMatch(RelaxedMatchExpression x) {
+        layouter.keyWord("r_match").print(" ");
+        x.expr().visit(this);
+        layouter.print(" ");
+        layouter.print("{");
+        layouter.brk();
+        for (var arm : x.arms()) {
+            arm.visit(this);
+            layouter.print(",");
+            layouter.brk();
+        }
+        layouter.print("}");
     }
 
     @Override
     public void performActionOnMatchArm(MatchArm x) {
-
+        x.pattern().visit(this);
+        layouter.print(" ");
+        if (x.guard() != null) {
+            x.guard().visit(this);
+            layouter.print(" ");
+        }
+        layouter.print("=> ");
+        x.body().visit(this);
     }
 
     @Override

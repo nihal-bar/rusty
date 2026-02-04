@@ -13,7 +13,15 @@ import org.key_project.util.collection.ImmutableArray;
 
 import org.jspecify.annotations.NonNull;
 
-public record MatchExpression(Expr expr, ImmutableArray<MatchArm> arms) implements Expr {
+public class MatchExpression implements Expr {
+    private final Expr expr;
+    private final ImmutableArray<IMatchArm> arms;
+
+    public MatchExpression(Expr expr, ImmutableArray<IMatchArm> arms) {
+        this.expr = expr;
+        this.arms = arms;
+    }
+
     @Override
     public void visit(Visitor v) {
         v.performActionOnMatchExpression(this);
@@ -48,4 +56,27 @@ public record MatchExpression(Expr expr, ImmutableArray<MatchArm> arms) implemen
     public Type type(Services services) {
         throw new UnsupportedOperationException();
     }
+
+    public Expr expr() {
+        return expr;
+    }
+
+    public ImmutableArray<IMatchArm> arms() {
+        return arms;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (MatchExpression) obj;
+        return Objects.equals(this.expr, that.expr) &&
+                Objects.equals(this.arms, that.arms);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(expr, arms);
+    }
+
 }

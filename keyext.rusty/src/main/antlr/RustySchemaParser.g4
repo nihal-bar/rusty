@@ -128,3 +128,11 @@ loopLabel
 label
     : LIFETIME_OR_LABEL | schemaVariable
     ;
+
+matchExpr
+   : (KW_MATCH | KW_RMATCH) expr LCURLYBRACE matchArms? RCURLYBRACE
+   ;
+
+matchArms
+   : (matchArm FATARROW matchArmExpression)* (matchArm FATARROW expr COMMA? | schemaVariable)?
+   ;

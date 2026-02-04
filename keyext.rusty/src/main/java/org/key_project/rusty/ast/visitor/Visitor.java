@@ -162,4 +162,6 @@ public interface Visitor {
     void performActionOnPathRustType(PathRustType x);
 
     void performActionOnPanicFrame(PanicFrame x);
+
+    void performActionOnRelaxedMatch(RelaxedMatchExpression x);
 }

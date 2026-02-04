@@ -707,15 +707,17 @@ public class SchemaConverter {
     private MatchExpression convertMatchExpr(
             RustySchemaParser.MatchExprContext ctx) {
         var expr = convertExpr(ctx.expr());
-        ImmutableArray<MatchArm> arms = ctx.matchArms() == null ? new ImmutableArray<>()
+        ImmutableArray<IMatchArm> arms = ctx.matchArms() == null ? new ImmutableArray<>()
                 : convertMatchArms(ctx.matchArms());
-        return new MatchExpression(expr, arms);
+        if (ctx.KW_MATCH() != null)
+            return new MatchExpression(expr, arms);
+        return new RelaxedMatchExpression(expr, arms);
     }
 
-    private ImmutableArray<MatchArm> convertMatchArms(
+    private ImmutableArray<IMatchArm> convertMatchArms(
             RustySchemaParser.MatchArmsContext ctx) {
         if (ctx.expr() != null) {
-            var arms = new MatchArm[ctx.matchArm().size()];
+            var arms = new IMatchArm[ctx.matchArm().size()];
             for (int i = 0; i < ctx.matchArm().size() - 1; i++) {
                 var armCtx = ctx.matchArm().get(i);
                 var pat = convertPattern(armCtx.pattern());
@@ -732,8 +734,22 @@ public class SchemaConverter {
                 armCtx.matchArmGuard() == null ? null : convertExpr(armCtx.matchArmGuard().expr());
             arms[arms.length - 1] = new MatchArm(pat, expr, convertExpr(ctx.expr()));
             return new ImmutableArray<>(arms);
+        } else if (ctx.schemaVariable() != null) {
+            var arms = new IMatchArm[ctx.matchArm().size() + 1];
+            for (int i = 0; i < ctx.matchArm().size(); i++) {
+                var armCtx = ctx.matchArm().get(i);
+                var pat = convertPattern(armCtx.pattern());
+                var expr = armCtx.matchArmGuard() == null ? null
+                        : convertExpr(armCtx.matchArmGuard().expr());
+                var armExprCtx = ctx.matchArmExpression(i);
+                var body = armExprCtx.expr() != null ? convertExpr(armExprCtx.expr())
+                        : convertExprWithBlock(armExprCtx.exprWithBlock());
+                arms[i] = new MatchArm(pat, expr, body);
+            }
+            arms[arms.length - 1] = (ProgramSV) lookupSchemaVariable(ctx.schemaVariable().getText().substring(2));
+            return new ImmutableArray<>(arms);
         } else {
-            var arms = new MatchArm[ctx.matchArm().size()];
+            var arms = new IMatchArm[ctx.matchArm().size()];
             for (int i = 0; i < ctx.matchArm().size(); i++) {
                 var armCtx = ctx.matchArm().get(i);
                 var pat = convertPattern(armCtx.pattern());

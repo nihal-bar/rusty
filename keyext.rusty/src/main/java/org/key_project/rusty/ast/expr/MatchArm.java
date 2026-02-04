@@ -12,7 +12,7 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public record MatchArm(Pattern pattern, @Nullable Expr guard, Expr body)
-        implements RustyProgramElement {
+        implements RustyProgramElement, IMatchArm {
     @Override
     public void visit(Visitor v) {
         v.performActionOnMatchArm(this);

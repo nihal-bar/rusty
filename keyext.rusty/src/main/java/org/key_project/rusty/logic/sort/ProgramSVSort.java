@@ -74,6 +74,9 @@ public abstract class ProgramSVSort extends SortImpl {
 
     public static final ProgramSVSort NON_MODEL_FUNCTION_BODY = new NonModelFunctionBodySort();
 
+    public static final ProgramSVSort LITERAL_PATTERN = new LiteralPattern();
+    public static final ProgramSVSort MATCH_ARM = new MatchArmSort();
+
     @SuppressWarnings("argument.type.incompatible")
     protected ProgramSVSort(Name name) {
         super(name, false, DefaultImmutableSet.nil());
@@ -411,6 +414,28 @@ public abstract class ProgramSVSort extends SortImpl {
             return (check instanceof PathExpr pe && pe.path().res() instanceof ResDef(Def def)
                     && (def instanceof VariantConstructor
                             || def instanceof GenericVariantConstructor));
+        }
+    }
+
+    private static class LiteralPattern extends ProgramSVSort {
+        protected LiteralPattern() {
+            super(new Name("LiteralPattern"));
+        }
+
+        @Override
+        public boolean canStandFor(RustyProgramElement check, Services services) {
+            return (check instanceof LiteralPattern);
+        }
+    }
+
+    private static class MatchArmSort extends ProgramSVSort {
+        protected MatchArmSort() {
+            super(new Name("MatchArm"));
+        }
+
+        @Override
+        public boolean canStandFor(RustyProgramElement check, Services services) {
+            return check instanceof MatchArm;
         }
     }
 }
