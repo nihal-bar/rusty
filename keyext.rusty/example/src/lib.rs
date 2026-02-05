@@ -119,7 +119,6 @@ fn match_deep_nested_tuple(data: (
         ) if vec.len() == 3 && s == "secret" && num > 100 => {
             "SUCCESS: All 7 layers matched!".to_string()
         }
-
         // Everything else fails
         _ => "FAIL".to_string()
     }
@@ -194,8 +193,7 @@ mod tests {
         assert_eq!(match_char('!'), "other char");
     }
 
-
-
+    
     #[test]
     fn test_pending_large_backlog() {
         // Positive: Pending with count > 100

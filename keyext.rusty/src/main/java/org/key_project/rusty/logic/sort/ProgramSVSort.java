@@ -76,6 +76,7 @@ public abstract class ProgramSVSort extends SortImpl {
 
     public static final ProgramSVSort LITERAL_PATTERN = new LiteralPattern();
     public static final ProgramSVSort MATCH_ARM = new MatchArmSort();
+    public static final ProgramSVSort TUPLE_PATTERN = new TuplePattern();
 
     @SuppressWarnings("argument.type.incompatible")
     protected ProgramSVSort(Name name) {
@@ -436,6 +437,17 @@ public abstract class ProgramSVSort extends SortImpl {
         @Override
         public boolean canStandFor(RustyProgramElement check, Services services) {
             return check instanceof MatchArm;
+        }
+    }
+
+    private static class TuplePattern extends ProgramSVSort {
+        protected TuplePattern() {
+            super(new Name("TuplePattern"));
+        }
+
+        @Override
+        public boolean canStandFor(RustyProgramElement check, Services services) {
+            return check instanceof TuplePattern;
         }
     }
 }
