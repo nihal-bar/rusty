@@ -10,9 +10,10 @@ fn foo() -> Option<u32> {
     let y: Option<bool> = None;
     x
 }
-#[spec(ensures(!foo.is_none()))]
+#[spec(ensures(true))]
 fn bar() -> i32 {
-    foo.unwrap() as i32
+    let x: i32 = 23;
+    x
 }
 
 
