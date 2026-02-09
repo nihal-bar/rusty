@@ -63,6 +63,7 @@ public record Crate(Mod topMod, HirTyMapping[] types, DefIdAdtMapping[] adts) {
                     .registerTypeAdapter(ParamName.class, new ParamName.Adapter())
                     .registerTypeAdapter(GenericParamKind.class, new GenericParamKind.Adapter())
                     .registerTypeAdapter(LifetimeParamKind.class, new LifetimeParamKind.Adapter())
+                    .registerTypeAdapter(MatchSource.class, new MatchSource.Adapter())
                     .create();
         return gson.fromJson(json, WrapperOutput.class);
     }
