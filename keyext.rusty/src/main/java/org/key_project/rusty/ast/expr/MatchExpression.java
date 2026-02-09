@@ -67,8 +67,10 @@ public class MatchExpression implements Expr {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this)
+            return true;
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
         var that = (MatchExpression) obj;
         return Objects.equals(this.expr, that.expr) &&
                 Objects.equals(this.arms, that.arms);

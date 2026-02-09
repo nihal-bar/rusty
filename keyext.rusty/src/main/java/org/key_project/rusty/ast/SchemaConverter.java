@@ -746,7 +746,8 @@ public class SchemaConverter {
                         : convertExprWithBlock(armExprCtx.exprWithBlock());
                 arms[i] = new MatchArm(pat, expr, body);
             }
-            arms[arms.length - 1] = (ProgramSV) lookupSchemaVariable(ctx.schemaVariable().getText().substring(2));
+            arms[arms.length - 1] =
+                (ProgramSV) lookupSchemaVariable(ctx.schemaVariable().getText().substring(2));
             return new ImmutableArray<>(arms);
         } else {
             var arms = new IMatchArm[ctx.matchArm().size()];
