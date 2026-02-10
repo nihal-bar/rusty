@@ -739,6 +739,8 @@ public class HirConverter {
                     r.inclusive() ? RangePattern.Bounds.Inclusive : RangePattern.Bounds.Exclusive;
                 yield new RangePattern(left, bounds, right);
             }
+            case PatKind.Lit l ->
+                new LiteralPattern((LitPatExpr) convertPatExpr(l.expr().expr(), null));
             default -> throw new IllegalArgumentException("Unknown pat: " + pat);
         };
     }

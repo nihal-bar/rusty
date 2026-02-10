@@ -6,15 +6,19 @@ package org.key_project.rusty.ast.pat;
 import org.key_project.logic.SyntaxElement;
 import org.key_project.rusty.ast.visitor.Visitor;
 
-public record LiteralPattern() implements Pattern {
+import org.jspecify.annotations.NonNull;
+
+public record LiteralPattern(LitPatExpr expr) implements Pattern {
     @Override
-    public SyntaxElement getChild(int n) {
+    public @NonNull SyntaxElement getChild(int n) {
+        if (n == 0)
+            return expr;
         throw new IndexOutOfBoundsException();
     }
 
     @Override
     public int getChildCount() {
-        return 0;
+        return 1;
     }
 
     @Override
