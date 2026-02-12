@@ -849,7 +849,18 @@ public class SchemaConverter {
         if (ctx.patternWithoutRange() != null) {
             var pat = ctx.patternWithoutRange();
             if (pat.literalPattern() != null) {
-                return new LiteralPattern();
+                var lp = pat.literalPattern();
+                LiteralExpression le;
+                if (lp.KW_TRUE() != null)
+                    le = new BooleanLiteralExpression(true);
+                else if (lp.KW_FALSE() != null)
+                    le = new BooleanLiteralExpression(false);
+                else if (lp.INTEGER_LITERAL() != null)
+                    le = getIntegerLiteralExpression(lp.INTEGER_LITERAL().getText());
+                else
+                    throw new UnsupportedOperationException(
+                        "Unsupported literal pattern: " + lp.getText());
+                return new LiteralPattern(new LitPatExpr(le, lp.MINUS() != null));
             }
             if (pat.identifierPattern() != null) {
                 boolean reference = pat.identifierPattern().KW_REF() != null;
