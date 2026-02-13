@@ -9,6 +9,7 @@ import org.key_project.logic.SyntaxElement;
 import org.key_project.rusty.Services;
 import org.key_project.rusty.ast.abstraction.Type;
 import org.key_project.rusty.ast.visitor.Visitor;
+import org.key_project.util.ExtList;
 import org.key_project.util.collection.ImmutableArray;
 
 import org.jspecify.annotations.NonNull;
@@ -20,6 +21,11 @@ public class MatchExpression implements Expr {
     public MatchExpression(Expr expr, ImmutableArray<IMatchArm> arms) {
         this.expr = expr;
         this.arms = arms;
+    }
+
+    public MatchExpression(ExtList children) {
+        this.expr = children.removeFirstOccurrence(Expr.class);
+        this.arms = new ImmutableArray<>(children.collect(IMatchArm.class));
     }
 
     @Override

@@ -94,6 +94,7 @@ public class ProofCollections {
 
         var pat = c.group("pattern");
         pat.provable("pat.key");
+       // pat.provable("wildcard.key");
 
         return c;
     }

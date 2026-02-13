@@ -4,11 +4,16 @@
 package org.key_project.rusty.ast.expr;
 
 import org.key_project.rusty.ast.visitor.Visitor;
+import org.key_project.util.ExtList;
 import org.key_project.util.collection.ImmutableArray;
 
 public class RelaxedMatchExpression extends MatchExpression {
     public RelaxedMatchExpression(Expr expr, ImmutableArray<IMatchArm> arms) {
         super(expr, arms);
+    }
+
+    public RelaxedMatchExpression(ExtList children) {
+        this(children.removeFirstOccurrence(Expr.class), new ImmutableArray<>(children.collect(IMatchArm.class)));
     }
 
     @Override

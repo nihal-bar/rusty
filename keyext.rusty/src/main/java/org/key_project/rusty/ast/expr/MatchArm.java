@@ -10,9 +10,35 @@ import org.key_project.rusty.ast.visitor.Visitor;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
+import org.key_project.util.ExtList;
 
-public record MatchArm(Pattern pattern, @Nullable Expr guard, Expr body)
+import java.util.Objects;
+
+public final class MatchArm
         implements RustyProgramElement, IMatchArm {
+    private final Pattern pattern;
+    private final @Nullable Expr guard;
+    private final Expr body;
+
+    public MatchArm(Pattern pattern, @Nullable Expr guard, Expr body) {
+        this.pattern = pattern;
+        this.guard = guard;
+        this.body = body;
+    }
+
+    public MatchArm(ExtList children) {
+        this.pattern = children.removeFirstOccurrence(Pattern.class);
+        var exprs = children.collect(Expr.class);
+        assert exprs.length <= 2;
+        if (exprs.length == 2) {
+            guard = exprs[0];
+            body = exprs[1];
+        } else {
+            guard = null;
+            body = exprs[0];
+        }
+    }
+
     @Override
     public void visit(Visitor v) {
         v.performActionOnMatchArm(this);
@@ -50,4 +76,32 @@ public record MatchArm(Pattern pattern, @Nullable Expr guard, Expr body)
         sb.append(" => ").append(body);
         return "";
     }
+
+    public Pattern pattern() {
+        return pattern;
+    }
+
+    public @Nullable Expr guard() {
+        return guard;
+    }
+
+    public Expr body() {
+        return body;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (MatchArm) obj;
+        return Objects.equals(this.pattern, that.pattern) &&
+                Objects.equals(this.guard, that.guard) &&
+                Objects.equals(this.body, that.body);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pattern, guard, body);
+    }
+
 }

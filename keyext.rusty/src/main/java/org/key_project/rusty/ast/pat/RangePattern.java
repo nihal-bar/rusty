@@ -8,13 +8,43 @@ import org.key_project.rusty.ast.RustyProgramElement;
 import org.key_project.rusty.ast.visitor.Visitor;
 
 import org.jspecify.annotations.Nullable;
+import org.key_project.util.ExtList;
+
+import java.util.Objects;
 
 /// This class represents range patterns.
 ///
 /// <a href="https://doc.rust-lang.org/reference/patterns.html#range-patterns">RangePattern
 /// Grammar</a>
-public record RangePattern(@Nullable PatExpr left, Bounds bounds, @Nullable PatExpr right)
+public final class RangePattern
         implements Pattern {
+    private final @Nullable PatExpr left;
+    private final Bounds bounds;
+    private final @Nullable PatExpr right;
+
+    /**
+     *
+     */
+    public RangePattern(@Nullable PatExpr left, Bounds bounds, @Nullable PatExpr right) {
+        this.left = left;
+        this.bounds = bounds;
+        this.right = right;
+    }
+
+    public RangePattern(ExtList children) {
+        bounds = children.get(Bounds.class);
+        var pats = children.collect(PatExpr.class);
+        assert pats.length <= 2;
+        if (pats.length == 2) {
+            left = pats[0];
+            right = pats[1];
+        } else {
+            left = null;
+            right = pats[0];
+        }
+
+    }
+
     public enum Bounds
             implements RustyProgramElement {
         Inclusive("..="), Exclusive(".."), Obsolete("...");
@@ -63,7 +93,7 @@ public record RangePattern(@Nullable PatExpr left, Bounds bounds, @Nullable PatE
         if (n == 0 && right != null)
             return right;
         throw new IndexOutOfBoundsException(
-            "RangePattern has only " + getChildCount() + " children");
+                "RangePattern has only " + getChildCount() + " children");
     }
 
     @Override
@@ -86,4 +116,32 @@ public record RangePattern(@Nullable PatExpr left, Bounds bounds, @Nullable PatE
             sb.append(right);
         return sb.toString();
     }
+
+    public @Nullable PatExpr left() {
+        return left;
+    }
+
+    public Bounds bounds() {
+        return bounds;
+    }
+
+    public @Nullable PatExpr right() {
+        return right;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (RangePattern) obj;
+        return Objects.equals(this.left, that.left) &&
+                Objects.equals(this.bounds, that.bounds) &&
+                Objects.equals(this.right, that.right);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(left, bounds, right);
+    }
+
 }

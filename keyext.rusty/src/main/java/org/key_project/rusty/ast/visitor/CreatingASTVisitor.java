@@ -13,6 +13,7 @@ import org.key_project.rusty.ast.Label;
 import org.key_project.rusty.ast.RustyProgramElement;
 import org.key_project.rusty.ast.expr.*;
 import org.key_project.rusty.ast.pat.LitPatExpr;
+import org.key_project.rusty.ast.pat.RangePattern;
 import org.key_project.rusty.ast.stmt.EmptyStatement;
 import org.key_project.rusty.ast.stmt.ExpressionStatement;
 import org.key_project.rusty.ast.stmt.LetStatement;
@@ -337,6 +338,50 @@ public abstract class CreatingASTVisitor extends RustyASTVisitor {
             @Override
             RustyProgramElement createNewElement(ExtList changeList) {
                 return new ArrayExpression(changeList, services);
+            }
+        };
+        def.doAction(x);
+    }
+
+    @Override
+    public void performActionOnMatchExpression(MatchExpression x) {
+        DefaultAction def = new DefaultAction(x) {
+            @Override
+            RustyProgramElement createNewElement(ExtList changeList) {
+                return new MatchExpression(changeList);
+            }
+        };
+        def.doAction(x);
+    }
+
+    @Override
+    public void performActionOnRelaxedMatch(RelaxedMatchExpression x) {
+        DefaultAction def = new DefaultAction(x) {
+            @Override
+            RustyProgramElement createNewElement(ExtList changeList) {
+                return new RelaxedMatchExpression(changeList);
+            }
+        };
+        def.doAction(x);
+    }
+
+    @Override
+    public void performActionOnMatchArm(MatchArm x) {
+        DefaultAction def = new DefaultAction(x) {
+            @Override
+            RustyProgramElement createNewElement(ExtList changeList) {
+                return new MatchArm(changeList);
+            }
+        };
+        def.doAction(x);
+    }
+
+    @Override
+    public void performActionOnRangepattern(RangePattern x) {
+        DefaultAction def = new DefaultAction(x) {
+            @Override
+            RustyProgramElement createNewElement(ExtList changeList) {
+                return new RangePattern(changeList);
             }
         };
         def.doAction(x);
