@@ -28,4 +28,9 @@ public class WildCardPattern implements Pattern {
     public void visit(Visitor v) {
         v.performActionOnWildCardPattern(this);
     }
+
+    @Override
+    public String toString() {
+        return "_";
+    }
 }

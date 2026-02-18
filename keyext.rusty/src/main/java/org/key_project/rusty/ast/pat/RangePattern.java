@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: GPL-2.0-only */
 package org.key_project.rusty.ast.pat;
 
+import java.util.Objects;
+
 import org.key_project.logic.SyntaxElement;
 import org.key_project.rusty.ast.RustyProgramElement;
 import org.key_project.rusty.ast.visitor.Visitor;
-
-import org.jspecify.annotations.Nullable;
 import org.key_project.util.ExtList;
 
-import java.util.Objects;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 /// This class represents range patterns.
 ///
@@ -61,7 +62,7 @@ public final class RangePattern
         }
 
         @Override
-        public SyntaxElement getChild(int n) {
+        public @NonNull SyntaxElement getChild(int n) {
             throw new IndexOutOfBoundsException();
         }
 
@@ -72,7 +73,7 @@ public final class RangePattern
 
         @Override
         public void visit(Visitor v) {
-            // Bounds should stay invisible to the visitors and therefore no visit is needed
+            v.performActionOnRangePatternBounds(this);
         }
     }
 
@@ -93,7 +94,7 @@ public final class RangePattern
         if (n == 0 && right != null)
             return right;
         throw new IndexOutOfBoundsException(
-                "RangePattern has only " + getChildCount() + " children");
+            "RangePattern has only " + getChildCount() + " children");
     }
 
     @Override
@@ -131,8 +132,10 @@ public final class RangePattern
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this)
+            return true;
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
         var that = (RangePattern) obj;
         return Objects.equals(this.left, that.left) &&
                 Objects.equals(this.bounds, that.bounds) &&

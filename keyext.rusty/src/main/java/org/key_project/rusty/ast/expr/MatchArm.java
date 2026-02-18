@@ -3,16 +3,16 @@
  * SPDX-License-Identifier: GPL-2.0-only */
 package org.key_project.rusty.ast.expr;
 
+import java.util.Objects;
+
 import org.key_project.logic.SyntaxElement;
 import org.key_project.rusty.ast.RustyProgramElement;
 import org.key_project.rusty.ast.pat.Pattern;
 import org.key_project.rusty.ast.visitor.Visitor;
+import org.key_project.util.ExtList;
 
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import org.key_project.util.ExtList;
-
-import java.util.Objects;
 
 public final class MatchArm
         implements RustyProgramElement, IMatchArm {
@@ -74,7 +74,7 @@ public final class MatchArm
             sb.append(" if ").append(guard);
         }
         sb.append(" => ").append(body);
-        return "";
+        return sb.toString();
     }
 
     public Pattern pattern() {
@@ -91,8 +91,10 @@ public final class MatchArm
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
+        if (obj == this)
+            return true;
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
         var that = (MatchArm) obj;
         return Objects.equals(this.pattern, that.pattern) &&
                 Objects.equals(this.guard, that.guard) &&

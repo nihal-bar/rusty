@@ -15,6 +15,7 @@ import org.key_project.rusty.ast.abstraction.PrimitiveType;
 import org.key_project.rusty.ast.abstraction.Type;
 import org.key_project.rusty.ast.expr.*;
 import org.key_project.rusty.ast.pat.LitPatExpr;
+import org.key_project.rusty.ast.pat.LiteralPattern;
 import org.key_project.rusty.ast.pat.Pattern;
 import org.key_project.rusty.ast.stmt.Statement;
 import org.key_project.rusty.ast.ty.RustType;
@@ -425,7 +426,7 @@ public abstract class ProgramSVSort extends SortImpl {
 
         @Override
         public boolean canStandFor(RustyProgramElement check, Services services) {
-            return (check instanceof LiteralPattern);
+            return (check instanceof org.key_project.rusty.ast.pat.LiteralPattern);
         }
     }
 

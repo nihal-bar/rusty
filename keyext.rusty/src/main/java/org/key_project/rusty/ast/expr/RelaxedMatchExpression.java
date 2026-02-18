@@ -13,7 +13,8 @@ public class RelaxedMatchExpression extends MatchExpression {
     }
 
     public RelaxedMatchExpression(ExtList children) {
-        this(children.removeFirstOccurrence(Expr.class), new ImmutableArray<>(children.collect(IMatchArm.class)));
+        this(children.removeFirstOccurrence(Expr.class),
+            new ImmutableArray<>(children.collect(IMatchArm.class)));
     }
 
     @Override

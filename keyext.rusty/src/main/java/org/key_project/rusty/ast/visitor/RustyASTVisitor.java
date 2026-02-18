@@ -266,6 +266,11 @@ public abstract class RustyASTVisitor extends RustyASTWalker implements Visitor 
     }
 
     @Override
+    public void performActionOnRangePatternBounds(RangePattern.Bounds x) {
+        doDefaultAction(x);
+    }
+
+    @Override
     public void performActionOnUnaryExpression(UnaryExpression x) {
         doDefaultAction(x);
     }
@@ -417,6 +422,11 @@ public abstract class RustyASTVisitor extends RustyASTWalker implements Visitor 
 
     @Override
     public void performActionOnRelaxedMatch(RelaxedMatchExpression x) {
+        doDefaultAction(x);
+    }
+
+    @Override
+    public void performActionOnExprPattern(ExprPattern x) {
         doDefaultAction(x);
     }
 }

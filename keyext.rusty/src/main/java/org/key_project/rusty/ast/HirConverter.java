@@ -741,6 +741,14 @@ public class HirConverter {
             }
             case PatKind.Lit l ->
                 new LiteralPattern((LitPatExpr) convertPatExpr(l.expr().expr(), null));
+            case PatKind.Or o -> {
+                var pats = new Pattern[o.pats().length];
+                for (int i = 0; i < pats.length; ++i) {
+                    pats[i] = convertPat(o.pats()[i], ty);
+                }
+                yield new AltPattern(new ImmutableArray<>(pats));
+            }
+            case PatKind.Expr e -> new ExprPattern(convertPatExpr(e.expr(), ty));
             default -> throw new IllegalArgumentException("Unknown pat: " + pat);
         };
     }

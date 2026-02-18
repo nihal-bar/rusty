@@ -164,4 +164,8 @@ public interface Visitor {
     void performActionOnPanicFrame(PanicFrame x);
 
     void performActionOnRelaxedMatch(RelaxedMatchExpression x);
+
+    void performActionOnExprPattern(ExprPattern x);
+
+    void performActionOnRangePatternBounds(RangePattern.Bounds x);
 }

@@ -27,47 +27,46 @@ use rml_contracts::*;
 
 // //
 #[spec(ensures(true))]
-fn match_bool() -> bool{
-    let x:i32=10;
+fn match_bool() -> bool {
+    let x: i32 = 10;
     let mut res_string = false;
-     match x {
+    match x {
         1..=5 => res_string = true,
-         _ => res_string = false,
-     }
-     res_string
- }
+        _ => res_string = false,
+    }
+    res_string
+}
 
 #[spec(ensures(result == 10))]
-fn match_wildcard() -> u32{
+fn match_wildcard() -> u32 {
     let b = true;
     let x;
-    match b{
+    match b {
         _ => x = 10,
     }
     x
 }
-// //
-// #[spec(ensures(true))]
-// pub fn match_int() -> i32{
-//     let x = 2;
-//     let a;
-//     match x{
-//         1..=5 => {
-//             a = x;
-//             //println!("Within range 1 to 5: {}", a);
-//
-//         }
-//         6 | 8 | 10 =>
-//             {a =x;
-//               //  println!("Even number smaller than 12: {}", a);
-//             },
-//         _ =>{
-//             a = -1 ;
-//             //println!("Value Dropped!, User-defined error{}",a);
-//         }
-//     }
-//     a
-// }
+
+#[spec(ensures(true))]
+pub fn match_int() -> i32 {
+    let x = 2;
+    let a;
+    match x {
+        1..=5 => {
+            a = x;
+            //println!("Within range 1 to 5: {}", a);
+        }
+        6 | 8 | 10 => {
+            a = x;
+            //  println!("Even number smaller than 12: {}", a);
+        }
+        _ => {
+            a = -1;
+            //println!("Value Dropped!, User-defined error{}",a);
+        }
+    }
+    a
+}
 // #[spec(ensures(true))]
 // pub fn match_float(point: f32) -> f32{
 //     let res:f32;

@@ -449,9 +449,19 @@ public class PrettyPrinter implements Visitor {
     }
 
     @Override
+    public void performActionOnExprPattern(ExprPattern x) {
+        x.visit(this);
+    }
+
+    @Override
     public void performActionOnExpressionStatement(ExpressionStatement x) {
         x.getExpression().visit(this);
         layouter.print(";");
+    }
+
+    @Override
+    public void performActionOnRangePatternBounds(RangePattern.Bounds x) {
+        layouter.print(x.toString());
     }
 
     @Override

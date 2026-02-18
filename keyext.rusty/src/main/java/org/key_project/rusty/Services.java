@@ -19,6 +19,7 @@ import org.key_project.rusty.ast.abstraction.ForeignFnType;
 import org.key_project.rusty.ast.abstraction.GenericConstParam;
 import org.key_project.rusty.ast.abstraction.Type;
 import org.key_project.rusty.ast.expr.*;
+import org.key_project.rusty.ast.pat.LitPatExpr;
 import org.key_project.rusty.ldt.LDT;
 import org.key_project.rusty.ldt.LDTs;
 import org.key_project.rusty.logic.*;
@@ -247,12 +248,16 @@ public class Services implements LogicServices, ProofServices {
                 && def instanceof VariantConstructor(Function fn)) {
             return tb.func(fn);
         }
-        if (pe instanceof PathExpr p && p.path().res() instanceof ResDef(Def def)
+        if (pe instanceof PathExpr(Path<Res> path, Type type)
+                && path.res() instanceof ResDef(Def def)
                 && def instanceof GenericVariantConstructor(ParametricFunctionDecl pfn)) {
-            var sort = (ParametricSortInstance) ((Enum) p.type()).sort();
+            var sort = (ParametricSortInstance) ((Enum) type).sort();
             ImmutableList<GenericArgument> args = sort.getArgs();
             var fn = ParametricFunctionInstance.get(pfn, args);
             return tb.func(fn);
+        }
+        if (pe instanceof LitPatExpr lpe) {
+            return convertToLogicElement(lpe.toExpr(), services);
         }
         throw new IllegalArgumentException(
             "Unknown or not convertible ProgramElement " + pe + " of type "
