@@ -450,7 +450,7 @@ public class PrettyPrinter implements Visitor {
 
     @Override
     public void performActionOnExprPattern(ExprPattern x) {
-        x.visit(this);
+        x.expr().visit(this);
     }
 
     @Override
