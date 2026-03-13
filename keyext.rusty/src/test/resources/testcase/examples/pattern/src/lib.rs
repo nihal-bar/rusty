@@ -5,99 +5,132 @@ extern crate rml_contracts;
 use rml_contracts::*;
 
 #[spec(ensures(true))]
-fn foo() -> Option<u32> {
-    let x = Some(1u32) ;
-    let y: Option<bool> = None;
-    x
-}
-#[spec(ensures(!foo.is_none()))]
-fn bar() -> i32 {
-    foo.unwrap() as i32
+fn match_or() -> i32{
+    let x:i32 = 12;
+    let mut j:i32 = 0;
+
+    match x {
+        1..=10 => j = 10,
+        11|12 => j = 1,
+        99 => j = 12,
+        100 => j = 2,
+        _ => j = -1,
+    };
+    j
 }
 
+//println defines a unique type for the json, throws errors. Just have empty body instead.
+#[spec(ensures(true))]
+fn match_binding() -> i32{
+    let x:i32 = 11;
+    let mut y:i32 =0;
 
-//
+    match x {
+        y @ 11 => {},
+        y @ _ => {},
+    }
+    y
+}
 // #[spec(ensures(true))]
-// pub fn match_bool(cond: bool) -> bool{ //unnecessary casting, works if fn returns bool as well
-//     let res_string;
-//     match cond {
-//         true => res_string = true,
-//         false => res_string = false,
-//     }
-//     res_string
+// fn foo() -> Option<u32> {
+//     let x = Some(1u32) ;
+//     let y: Option<bool> = None;
+//     x
 // }
-// //
 // #[spec(ensures(true))]
-// pub fn match_int(point: i32) -> i32{
-//     let x = point;
+// fn bar() -> i32 {
+//     let x: i32 = 23;
+//     let y:i32 = 1002;
+//     let mut z:i32;
+//     let this_is_boolean = true;
+//
+//     if this_is_boolean {
+//         z = y/x;
+//     } else {
+//         z = x + 1;
+//     }
+//     z
+// }
+
+// //
+// #[spec(ensures(false))]
+// fn match_bool() -> bool{
+//     let x:i32=10;
+//     let mut res_string = false;
+//      match x {
+//         1..=5 => res_string = false,
+//          _ => res_string = false,
+//      }
+//      res_string
+//  }
+//
+// #[spec(ensures(result == 10))]
+// fn match_wildcard() -> u32{
+//     let b = true;
+//     let x;
+//     match b{
+//         _ => x = 10,
+//     }
+//     x
+// }
+// // //
+// #[spec(ensures(true))]
+// pub fn match_int() -> i32{
+//     let x = 2;
 //     let a;
 //     match x{
 //         1..=5 => {
 //             a = x;
-//             println!("Within range 1 to 5: {}", a);
+//             //println!("Within range 1 to 5: {}", a);
 //
 //         }
-//         6 | 8 | 10 =>
-//             {a =x;
-//                 println!("Even number smaller than 12: {}", a);
+//         6 | 8 | 10 => {
+//             a = x ;
+//               //  println!("Even number smaller than 12: {}", a);
 //             },
 //         _ =>{
 //             a = -1 ;
-//             println!("Value Dropped!, User-defined error{}",a);
+//             //println!("Value Dropped!, User-defined error{}",a);
 //         }
 //     }
 //     a
 // }
-// #[spec(ensures(true))]
-// pub fn match_float(point: f32) -> f32{
-//     let res:f32;
-//     match point {
-//         f if f == 0.0 => res = f,
-//         f if f > 0.0 && f < 1.0 => {res = f; print!("fraction")},
-//         f if f.is_nan() =>{res = f; print!("not a number")},
-//         _ => {res = f32::MIN; print!("other float, saving as smallest showable number")}
-//     }
-//     res
-// }
+
+// REQUIRES SERDE TAG
+#[spec(ensures(true))]
+pub fn match_char(c: char) -> i32 {
+    match c {
+        'a'..='z' => 0,
+        'A'..='Z' => 1,
+        '0'..='9' => 2,
+        '\n' => 3,
+        '\t' => 4,
+        ' ' => 5,
+        _ => 6,
+    }
+}
+//TODO can I test enums?
+pub enum Direction {
+    Left,
+    Right,
+    Up,
+    Down
+}
 //
-// #[spec(ensures(true))]
-// pub fn match_char(c: char) -> &'static str {
-//     match c {
-//         'a'..='z' => "lowercase",
-//         'A'..='Z' => "uppercase",
-//         '0'..='9' => "digit",
-//         '\n' => "newline",
-//         '\t' => "tab",
-//         ' ' => "space",
-//         _ => "other char",
-//     }
-// }
-// pub enum Direction {
-//     Left,
-//     Right,
-//     Up,
-//     Down
-// }
-//
-// #[spec(ensures(true))]
-// pub fn match_enum_simple(dir: Direction) -> &'static str {
-//     let res_string;
-//     match dir {
-//         Direction::Left => {res_string = "left"},
-//         Direction::Right => {res_string = "right"},
-//         Direction::Up => {res_string = "up"},
-//         Direction::Down => {res_string = "down"}
-//         _ => {res_string = "other direction"}
-//     }
-//     res_string
-// }
-//
-//
-// pub enum Status { //enum with tuple input
-//     Pending,
-//     Active{priority:u8},
-//     Completed(String)
-// }
+#[spec(ensures(true))]
+pub fn match_enum_simple(dir: Direction) -> u32 {
+    match dir {
+        Direction::Left => 0,
+        Direction::Right => 1,
+        Direction::Up => 2,
+        Direction::Down => 3
+    }
+}
+pub enum Status { //enum with tuple input
+    Pending,
+    Active{priority:u8},
+    Completed{priority:u8}
+}
 //
 // #[spec(ensures(true))]
 // pub fn match_enum_with_vals(item: (Status, i32)){
@@ -147,3 +180,5 @@ fn bar() -> i32 {
 //     }
 // }
 //
+
+
