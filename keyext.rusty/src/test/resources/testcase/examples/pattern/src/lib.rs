@@ -26,16 +26,17 @@ use rml_contracts::*;
 // }
 
 // //
-#[spec(ensures(true))]
-fn match_bool() -> bool {
+#[spec(ensures(false))]
+pub fn match_bool_simple() -> bool {
     let x: i32 = 10;
-    let mut res_string = false;
+    let mut res_string = true;
     match x {
         1..=5 => res_string = true,
         _ => res_string = false,
     }
     res_string
 }
+
 
 #[spec(ensures(result == 10))]
 fn match_wildcard() -> u32 {
@@ -66,6 +67,44 @@ pub fn match_int() -> i32 {
         }
     }
     a
+}
+#[spec(ensures(true))]
+fn match_bool_complex() -> bool {
+    // more branches and nested matching
+    let x: i32 = 3;
+    let mut res = false;
+    match x {
+        0 => res = false,
+        1..=3 => match x {
+            2 => res = true,
+            _ => res = true,
+        },
+        _ => res = false,
+    }
+    res
+}
+
+#[spec(ensures(true))]
+fn match_bool_complex_2() -> bool {
+    let x: i32 = 3;
+    let mut res = false;
+    match x {
+        0 => res = false,
+        1..=3 => res = true,
+        4..=10 => res = false,
+        _ => res = false,
+    }
+    res
+}
+
+#[spec(ensures(result == 10))]
+fn match_wildcard() -> u32 {
+    let b = true;
+    let x;
+    match b {
+        _ => x = 10,
+    }
+    x
 }
 // #[spec(ensures(true))]
 // pub fn match_float(point: f32) -> f32{
