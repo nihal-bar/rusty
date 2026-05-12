@@ -19,6 +19,7 @@ import org.key_project.rusty.ast.abstraction.ForeignFnType;
 import org.key_project.rusty.ast.abstraction.GenericConstParam;
 import org.key_project.rusty.ast.abstraction.Type;
 import org.key_project.rusty.ast.expr.*;
+import org.key_project.rusty.ast.pat.ExprPattern;
 import org.key_project.rusty.ast.pat.LitPatExpr;
 import org.key_project.rusty.ldt.LDT;
 import org.key_project.rusty.ldt.LDTs;
@@ -257,6 +258,9 @@ public class Services implements LogicServices, ProofServices {
             return tb.func(fn);
         }
         if (pe instanceof LitPatExpr lpe) {
+            return convertToLogicElement(lpe.toExpr(), services);
+        }
+        if (pe instanceof ExprPattern ep && ep.expr() instanceof LitPatExpr lpe) {
             return convertToLogicElement(lpe.toExpr(), services);
         }
         throw new IllegalArgumentException(

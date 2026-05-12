@@ -97,15 +97,6 @@ fn match_bool_complex_2() -> bool {
     res
 }
 
-#[spec(ensures(result == 10))]
-fn match_wildcard() -> u32 {
-    let b = true;
-    let x;
-    match b {
-        _ => x = 10,
-    }
-    x
-}
 // #[spec(ensures(true))]
 // pub fn match_float(point: f32) -> f32{
 //     let res:f32;

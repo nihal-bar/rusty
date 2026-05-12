@@ -93,19 +93,19 @@ public class ProofCollections {
         // algos.provable("binary-search/binary-search.key");
 
         var pat = c.group("pattern");
-//        pat.provable("match_bool_simple.key");
+        // pat.provable("match_bool_simple.key");
         pat.provable("match_bool_complex.key");
         pat.provable("match_wildcard.key");
-//        pat.provable("match_int_simple.key");
-//        pat.provable("match_int_complex.key");
-//        pat.provable("match_range_excl_simple.key");
-//        pat.provable("match_range_excl_complex.key");
-//        pat.provable("match_range_incl_simple.key");
-//        pat.provable("match_range_incl_complex.key");
-//        pat.provable("match_ident_simple.key");
-//        pat.provable("match_ident_complex.key");
-//        pat.provable("match_shadow_simple.key");
-//        pat.provable("match_shadow_complex.key");
+        // pat.provable("match_int_simple.key");
+        // pat.provable("match_int_complex.key");
+        // pat.provable("match_range_excl_simple.key");
+        // pat.provable("match_range_excl_complex.key");
+        // pat.provable("match_range_incl_simple.key");
+        // pat.provable("match_range_incl_complex.key");
+        // pat.provable("match_ident_simple.key");
+        // pat.provable("match_ident_complex.key");
+        // pat.provable("match_shadow_simple.key");
+        // pat.provable("match_shadow_complex.key");
 
         // var fm26 = c.group("fm26");
         // fm26.provable("fm26/example1.key");
