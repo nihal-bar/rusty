@@ -168,4 +168,12 @@ public interface Visitor {
     void performActionOnExprPattern(ExprPattern x);
 
     void performActionOnRangePatternBounds(RangePattern.Bounds x);
+
+    void performActionOnPatField(PatField x);
+
+    void performActionOnStructPattern(StructPattern x);
+
+    void performActionOnTupleStructPattern(TupleStructPattern x);
+
+    void performActionOnSlicePattern(SlicePattern x);
 }

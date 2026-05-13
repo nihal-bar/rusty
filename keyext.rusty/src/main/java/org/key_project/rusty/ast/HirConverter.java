@@ -754,8 +754,43 @@ public class HirConverter {
                 yield new AltPattern(new ImmutableArray<>(pats));
             }
             case PatKind.Expr e -> new ExprPattern(convertPatExpr(e.expr(), ty));
+            case PatKind.Struct struct -> {
+                var path = convertQPath(struct.path());
+                var fields = new PatField[struct.fields().length];
+                for (int i = 0; i < fields.length; ++i) {
+                    fields[i] = convertPatField(struct.fields()[i], isCtxFnParam);
+                }
+                yield new StructPattern(path, new ImmutableArray<>(fields), struct.rest());
+            }
+            case PatKind.TupleStruct ts -> {
+                var path = convertQPath(ts.path());
+                var pats = new Pattern[ts.pats().length];
+                for (int i = 0; i < pats.length; ++i) {
+                    pats[i] = convertPat(ts.pats()[i], isCtxFnParam, null);
+                }
+                yield new TupleStructPattern(path, new ImmutableArray<>(pats), ts.dotDotPos());
+            }
+            case PatKind.Slice s -> {
+                var start = new Pattern[s.start().length];
+                for (var i = 0; i < start.length; ++i) {
+                    start[i] = convertPat(s.start()[i], isCtxFnParam, null);
+                }
+                var mid = s.mid() == null ? null : convertPat(s.mid(), isCtxFnParam, null);
+                var end = new Pattern[s.end().length];
+                for (var i = 0; i < end.length; ++i) {
+                    end[i] = convertPat(s.end()[i], isCtxFnParam, null);
+                }
+                yield new SlicePattern(new ImmutableArray<>(start), mid, new ImmutableArray<>(end));
+            }
             default -> throw new IllegalArgumentException("Unknown pat: " + pat);
         };
+    }
+
+    private PatField convertPatField(org.key_project.rusty.parser.hir.pat.PatField field,
+            boolean isCtxFnParam) {
+        var name = convertIdent(field.ident());
+        var pat = convertPat(field.pat(), isCtxFnParam, null);
+        return new PatField(new Identifier(new Name(name)), pat, field.isShorthand());
     }
 
     private PatExpr convertPatExpr(org.key_project.rusty.parser.hir.pat.PatExpr pe,

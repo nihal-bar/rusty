@@ -454,6 +454,68 @@ public class PrettyPrinter implements Visitor {
     }
 
     @Override
+    public void performActionOnPatField(PatField x) {
+        x.name().visit(this);
+        if (!x.isShorthand()) {
+            layouter.print(": ");
+            x.pattern().visit(this);
+        }
+    }
+
+    @Override
+    public void performActionOnSlicePattern(SlicePattern x) {
+        layouter.print("[");
+        for (int i = 0; i < x.start().size(); i++) {
+            if (i != 0) {
+                layouter.print(", ");
+            }
+            x.start().get(i).visit(this);
+        }
+        if (x.mid() != null) {
+            x.mid().visit(this);
+        }
+        for (int i = 0; i < x.end().size(); i++) {
+            if (i != 0) {
+                layouter.print(", ");
+            }
+            x.end().get(i).visit(this);
+        }
+        layouter.print("]");
+    }
+
+    @Override
+    public void performActionOnStructPattern(StructPattern x) {
+        x.path().visit(this);
+        layouter.print(" { ");
+        for (int i = 0; i < x.fields().size(); i++) {
+            if (i != 0) {
+                layouter.print(", ");
+            }
+            x.fields().get(i).visit(this);
+        }
+        if (x.rest()) {
+            layouter.print(", ..");
+        }
+        layouter.print(" }");
+    }
+
+    @Override
+    public void performActionOnTupleStructPattern(TupleStructPattern x) {
+        x.path().visit(this);
+        layouter.print("(");
+        for (int i = 0; i < x.patterns().size(); i++) {
+            if (i != 0) {
+                layouter.print(", ");
+            }
+            if (x.dotDotPos() == i) {
+                layouter.print(".., ");
+            }
+            x.patterns().get(i).visit(this);
+        }
+        layouter.print(")");
+    }
+
+    @Override
     public void performActionOnExpressionStatement(ExpressionStatement x) {
         x.getExpression().visit(this);
         layouter.print(";");
