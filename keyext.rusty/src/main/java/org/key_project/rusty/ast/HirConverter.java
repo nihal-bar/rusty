@@ -803,6 +803,14 @@ public class HirConverter {
                 }
                 yield new SlicePattern(new ImmutableArray<>(start), mid, new ImmutableArray<>(end));
             }
+            case PatKind.Tuple t -> {
+                var pats = new Pattern[t.pats().length];
+                var tTy = (TupleType) ty;
+                for (int i = 0; i < pats.length; ++i) {
+                    pats[i] = convertPat(t.pats()[i], isCtxFnParam, tTy.getTypes().get(i));
+                }
+                yield new TuplePattern(new ImmutableArray<>(pats), t.dotDotPos());
+            }
             default -> throw new IllegalArgumentException("Unknown pat: " + pat);
         };
     }

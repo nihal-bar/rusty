@@ -178,4 +178,6 @@ public interface Visitor {
     void performActionOnSlicePattern(SlicePattern x);
 
     void performActionOnPathPatExpr(PathPatExpr x);
+
+    void performActionOnTuplePattern(TuplePattern x);
 }

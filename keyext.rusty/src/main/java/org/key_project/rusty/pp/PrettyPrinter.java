@@ -521,6 +521,21 @@ public class PrettyPrinter implements Visitor {
     }
 
     @Override
+    public void performActionOnTuplePattern(TuplePattern x) {
+        layouter.print("(");
+        for (int i = 0; i < x.patterns().size(); i++) {
+            if (i != 0) {
+                layouter.print(", ");
+            }
+            if (x.dotDotPos() == i) {
+                layouter.print(".., ");
+            }
+            x.patterns().get(i).visit(this);
+        }
+        layouter.print(")");
+    }
+
+    @Override
     public void performActionOnExpressionStatement(ExpressionStatement x) {
         x.getExpression().visit(this);
         layouter.print(";");
