@@ -25,10 +25,7 @@ import org.key_project.rusty.ast.stmt.ItemStatement;
 import org.key_project.rusty.ast.stmt.LetStatement;
 import org.key_project.rusty.ast.stmt.Statement;
 import org.key_project.rusty.ast.ty.*;
-import org.key_project.rusty.logic.op.ParametricFunctionDecl;
-import org.key_project.rusty.logic.op.ProgramFunction;
-import org.key_project.rusty.logic.op.ProgramVariable;
-import org.key_project.rusty.logic.op.RFunction;
+import org.key_project.rusty.logic.op.*;
 import org.key_project.rusty.logic.sort.*;
 import org.key_project.rusty.parser.hir.*;
 import org.key_project.rusty.parser.hir.expr.*;
@@ -263,7 +260,7 @@ public class HirConverter {
             case ExprKind.Let(var l) -> convertLetExpr(l);
             case ExprKind.If e -> convertIfExpr(e, ty);
             case ExprKind.Loop e -> convertLoopExpr(e, id, ty);
-            case ExprKind.Match e -> convertMatchExpr(e, ty);
+            case ExprKind.Match e -> convertMatchExpr(e);
             case ExprKind.Closure e -> convertClosure(e);
             case ExprKind.BlockExpr e -> convertBlockExpr(e);
             case ExprKind.Assign e -> convertAssign(e, ty);
@@ -321,16 +318,17 @@ public class HirConverter {
         return new TypeCastExpression(convertExpr(e.expr()), convertHirTy(e.ty()));
     }
 
-    private MatchExpression convertMatchExpr(ExprKind.Match e, Type ty) {
+    private MatchExpression convertMatchExpr(ExprKind.Match e) {
         var arms = new MatchArm[e.arms().length];
+        var scrutineeTy = getType(e.expr().hirId());
         for (int i = 0; i < arms.length; i++) {
-            arms[i] = convertArm(e.arms()[i], ty);
+            arms[i] = convertArm(e.arms()[i], scrutineeTy);
         }
         return new MatchExpression(convertExpr(e.expr()), new ImmutableArray<>(arms));
     }
 
-    private MatchArm convertArm(Arm arm, Type ty) {
-        return new MatchArm(convertPat(arm.pat(), ty),
+    private MatchArm convertArm(Arm arm, Type scrutineeTy) {
+        return new MatchArm(convertPat(arm.pat(), scrutineeTy),
             arm.guard() == null ? null : convertExpr(arm.guard()), convertExpr(arm.body()));
     }
 
@@ -704,7 +702,7 @@ public class HirConverter {
         return convertPat(pat, false, ty);
     }
 
-    private Pattern convertPat(Pat pat, boolean isCtxFnParam, @Nullable Type ty) {
+    private Pattern convertPat(Pat pat, boolean isCtxFnParam, Type ty) {
         return switch (pat.kind()) {
             case PatKind.Binding p -> {
                 boolean ref = false;
@@ -734,9 +732,6 @@ public class HirConverter {
                 yield new BindingPattern(ref, mutRef, mut, pv, opt);
             }
             case PatKind.Wild w -> WildCardPattern.WILDCARD;
-            case PatKind.Path p -> {
-                yield new PathPattern();
-            }
             case PatKind.Range r -> {
                 var left = r.lhs() == null ? null : convertPatExpr(r.lhs(), ty);
                 var right = r.rhs() == null ? null : convertPatExpr(r.rhs(), ty);
@@ -745,7 +740,7 @@ public class HirConverter {
                 yield new RangePattern(left, bounds, right);
             }
             case PatKind.Lit l ->
-                new LiteralPattern((LitPatExpr) convertPatExpr(l.expr().expr(), null));
+                new LiteralPattern((LitPatExpr) convertPatExpr(l.expr().expr(), ty));
             case PatKind.Or o -> {
                 var pats = new Pattern[o.pats().length];
                 for (int i = 0; i < pats.length; ++i) {
@@ -757,28 +752,54 @@ public class HirConverter {
             case PatKind.Struct struct -> {
                 var path = convertQPath(struct.path());
                 var fields = new PatField[struct.fields().length];
+                var sTy = (Struct) ty;
                 for (int i = 0; i < fields.length; ++i) {
-                    fields[i] = convertPatField(struct.fields()[i], isCtxFnParam);
+                    fields[i] = convertPatField(struct.fields()[i], isCtxFnParam,
+                        sTy.getType(struct.fields()[i].ident().name()));
                 }
                 yield new StructPattern(path, new ImmutableArray<>(fields), struct.rest());
             }
             case PatKind.TupleStruct ts -> {
                 var path = convertQPath(ts.path());
                 var pats = new Pattern[ts.pats().length];
+                Type[] tys = null;
+                if (ty instanceof Enum e) {
+                    var qpr = (QPathResolved) path;
+                    var vName = qpr.path().segments().last().ident();
+                    for (var v : e.variants()) {
+                        if (v.name().toString().equals(vName)) {
+                            tys = new Type[v.fields().size()];
+                            for (var f : v.fields()) {
+                                int i = Integer.parseInt(f.name().toString());
+                                tys[i] = f.type();
+                            }
+                        }
+                    }
+                    if (tys == null)
+                        throw new IllegalStateException("No matching variant found. Impossible!");
+                } else {
+                    throw new UnsupportedOperationException("Unsupported type: " + ty);
+                }
                 for (int i = 0; i < pats.length; ++i) {
-                    pats[i] = convertPat(ts.pats()[i], isCtxFnParam, null);
+                    pats[i] = convertPat(ts.pats()[i], isCtxFnParam, tys[i]);
                 }
                 yield new TupleStructPattern(path, new ImmutableArray<>(pats), ts.dotDotPos());
             }
             case PatKind.Slice s -> {
+                Type elementTy;
+                if (ty instanceof ArrayType at) {
+                    elementTy = at.getElementType();
+                } else {
+                    throw new UnsupportedOperationException("TODO: Slice ty");
+                }
                 var start = new Pattern[s.start().length];
                 for (var i = 0; i < start.length; ++i) {
-                    start[i] = convertPat(s.start()[i], isCtxFnParam, null);
+                    start[i] = convertPat(s.start()[i], isCtxFnParam, elementTy);
                 }
-                var mid = s.mid() == null ? null : convertPat(s.mid(), isCtxFnParam, null);
+                var mid = s.mid() == null ? null : convertPat(s.mid(), isCtxFnParam, elementTy);
                 var end = new Pattern[s.end().length];
                 for (var i = 0; i < end.length; ++i) {
-                    end[i] = convertPat(s.end()[i], isCtxFnParam, null);
+                    end[i] = convertPat(s.end()[i], isCtxFnParam, elementTy);
                 }
                 yield new SlicePattern(new ImmutableArray<>(start), mid, new ImmutableArray<>(end));
             }
@@ -787,18 +808,36 @@ public class HirConverter {
     }
 
     private PatField convertPatField(org.key_project.rusty.parser.hir.pat.PatField field,
-            boolean isCtxFnParam) {
+            boolean isCtxFnParam, Type ty) {
         var name = convertIdent(field.ident());
-        var pat = convertPat(field.pat(), isCtxFnParam, null);
+        var pat = convertPat(field.pat(), isCtxFnParam, ty);
         return new PatField(new Identifier(new Name(name)), pat, field.isShorthand());
     }
 
     private PatExpr convertPatExpr(org.key_project.rusty.parser.hir.pat.PatExpr pe,
-            @Nullable Type ty) {
+            Type ty) {
         return switch (pe.kind()) {
             case PatExprKind.Lit(var l, var n) ->
                 new LitPatExpr(
                     convertLitExpr(l, Objects.requireNonNull(ty, "Missing type for " + pe)), n);
+            case PatExprKind.Path(var path) -> {
+                var p = convertQPath(path);
+                org.key_project.logic.op.Function fn;
+                if (p instanceof QPathResolved qpr && qpr.path().res() instanceof ResDef(Def def)) {
+                    if (def instanceof GenericVariantConstructor(ParametricFunctionDecl pfn)) {
+                        var eTy = (Enum) ty;
+                        var psi = (ParametricSortInstance) eTy.sort();
+                        fn = ParametricFunctionInstance.get(pfn, psi.getArgs());
+                    } else if (def instanceof VariantConstructor(org.key_project.logic.op.Function fn1)) {
+                        fn = fn1;
+                    } else {
+                        throw new UnsupportedOperationException("TODO");
+                    }
+                } else {
+                    throw new UnsupportedOperationException("TODO");
+                }
+                yield new PathPatExpr(p, ty, fn);
+            }
             default -> throw new IllegalArgumentException("Unknown patExpr: " + pe);
         };
     }
@@ -813,7 +852,8 @@ public class HirConverter {
     private QPath convertQPath(org.key_project.rusty.parser.hir.QPath qPath) {
         return switch (qPath) {
             case org.key_project.rusty.parser.hir.QPath.Resolved(var selfTy, var path) ->
-                new QPathResolved(convertHirTy(selfTy), convertPath(path, this::convertRes));
+                new QPathResolved(selfTy == null ? null : convertHirTy(selfTy),
+                    convertPath(path, this::convertRes));
             default -> throw new IllegalArgumentException("Unknown path: " + qPath);
         };
     }
@@ -995,7 +1035,7 @@ public class HirConverter {
                     assert value.ctor() != null;
                     parametricVariantConstructors.put(value.ctor().id(), ctor);
                     variants[e.getKey()] =
-                        new GenericVariant(name, generics,
+                        new GenericVariant(new Name(value.name()), generics,
                             fields,
                             ctor);
                 }

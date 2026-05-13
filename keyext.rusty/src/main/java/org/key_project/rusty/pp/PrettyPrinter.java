@@ -454,6 +454,11 @@ public class PrettyPrinter implements Visitor {
     }
 
     @Override
+    public void performActionOnPathPatExpr(PathPatExpr x) {
+        x.path().visit(this);
+    }
+
+    @Override
     public void performActionOnPatField(PatField x) {
         x.name().visit(this);
         if (!x.isShorthand()) {

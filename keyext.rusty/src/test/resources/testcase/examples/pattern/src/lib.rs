@@ -196,3 +196,13 @@ fn match_bool_complex_2() -> bool {
 //     }
 // }
 //
+
+#[spec {
+    ensures(result)
+    }]
+fn simple_option(x: Option<i32>) -> bool {
+    match x {
+        Some(_) => true,
+        None => true
+    }
+}

@@ -21,6 +21,7 @@ import org.key_project.rusty.ast.abstraction.Type;
 import org.key_project.rusty.ast.expr.*;
 import org.key_project.rusty.ast.pat.ExprPattern;
 import org.key_project.rusty.ast.pat.LitPatExpr;
+import org.key_project.rusty.ast.pat.PathPatExpr;
 import org.key_project.rusty.ldt.LDT;
 import org.key_project.rusty.ldt.LDTs;
 import org.key_project.rusty.logic.*;
@@ -260,8 +261,13 @@ public class Services implements LogicServices, ProofServices {
         if (pe instanceof LitPatExpr lpe) {
             return convertToLogicElement(lpe.toExpr(), services);
         }
-        if (pe instanceof ExprPattern ep && ep.expr() instanceof LitPatExpr lpe) {
-            return convertToLogicElement(lpe.toExpr(), services);
+        if (pe instanceof ExprPattern(org.key_project.rusty.ast.pat.PatExpr expr)) {
+            if (expr instanceof LitPatExpr lpe) {
+                return convertToLogicElement(lpe.toExpr(), services);
+            }
+            if (expr instanceof PathPatExpr ppe) {
+                return tb.func(ppe.constant());
+            }
         }
         throw new IllegalArgumentException(
             "Unknown or not convertible ProgramElement " + pe + " of type "

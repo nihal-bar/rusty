@@ -449,4 +449,9 @@ public abstract class RustyASTVisitor extends RustyASTWalker implements Visitor 
     public void performActionOnTupleStructPattern(TupleStructPattern x) {
         doDefaultAction(x);
     }
+
+    @Override
+    public void performActionOnPathPatExpr(PathPatExpr x) {
+        doDefaultAction(x);
+    }
 }

@@ -61,4 +61,13 @@ public record Struct(Name name, ImmutableArray<Field> fields,
         // We are fully instantiated
         return this;
     }
+
+    public @Nullable Type getType(String fieldName) {
+        for (var f : fields) {
+            if (f.name().toString().equals(fieldName)) {
+                return f.type();
+            }
+        }
+        return null;
+    }
 }
