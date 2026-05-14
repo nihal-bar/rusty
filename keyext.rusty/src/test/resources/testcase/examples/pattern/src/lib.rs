@@ -4,40 +4,6 @@
 extern crate rml_contracts;
 use rml_contracts::*;
 
-// #[spec(ensures(true))]
-// fn foo() -> Option<u32> {
-//     let x = Some(1u32) ;
-//     let y: Option<bool> = None;
-//     x
-// }
-// #[spec(ensures(true))]
-// fn bar() -> i32 {
-//     let x: i32 = 23;
-//     let y:i32 = 1002;
-//     let mut z:i32;
-//     let this_is_boolean = true;
-//
-//     if this_is_boolean {
-//         z = y/x;
-//     } else {
-//         z = x + 1;
-//     }
-//     z
-// }
-
-// //
-#[spec(ensures(false))]
-pub fn match_bool_simple() -> bool {
-    let x: i32 = 10;
-    let mut res_string = true;
-    match x {
-        1..=5 => res_string = true,
-        _ => res_string = false,
-    }
-    res_string
-}
-
-
 #[spec(ensures(result == 10))]
 fn match_wildcard() -> u32 {
     let b = true;
@@ -47,42 +13,32 @@ fn match_wildcard() -> u32 {
     }
     x
 }
-
-#[spec(ensures(true))]
-pub fn match_int() -> i32 {
-    let x = 2;
-    let a;
+#[spec(ensures(result == false))]
+pub fn match_bool_simple() -> bool {
+    let x: i32 = 5;
+    let mut res_string = false;
     match x {
-        1..=5 => {
-            a = x;
-            //println!("Within range 1 to 5: {}", a);
-        }
-        6 | 8 | 10 => {
-            a = x;
-            //  println!("Even number smaller than 12: {}", a);
-        }
-        _ => {
-            a = -1;
-            //println!("Value Dropped!, User-defined error{}",a);
-        }
+        1..=5 => res_string = true,
+        90 => res_string = true,
+        _ => res_string = false,
     }
-    a
+    res_string
 }
-#[spec(ensures(true))]
+#[spec(ensures(result == true))]
 fn match_bool_complex() -> bool {
-    // more branches and nested matching
     let x: i32 = 3;
     let mut res = false;
     match x {
-        0 => res = false,
+        // 0 => res = false,
         1..=3 => match x {
-            2 => res = true,
+            // 2 => res = false,
             _ => res = true,
         },
         _ => res = false,
     }
     res
 }
+
 
 #[spec(ensures(true))]
 fn match_bool_complex_2() -> bool {
@@ -97,7 +53,29 @@ fn match_bool_complex_2() -> bool {
     res
 }
 
-// #[spec(ensures(true))]
+#[spec(ensures(true))]
+pub fn match_int_complex() -> i32 {
+    let x = 8;
+    let a;
+    match x {
+        n if n < 0 => a = -100,
+        1..=5 => a = x,
+        6..=10 => a = x,
+        _ => a = -1,
+    }
+    a
+}
+
+ // #[spec(ensures(true))]
+ // fn match_ident_simple() -> i32 {
+ //     let x = Some(3);
+ //     let out;
+ //     match x {
+ //         Some(v) => out = v,
+ //         None => out = -1,
+ //     }
+ //     out
+ // }
 // pub fn match_float(point: f32) -> f32{
 //     let res:f32;
 //     match point {
@@ -206,3 +184,46 @@ fn simple_option(x: Option<i32>) -> bool {
         None => true
     }
 }
+
+// #[spec(ensures(true))]
+// fn foo() -> Option<u32> {
+//     let x = Some(1u32) ;
+//     let y: Option<bool> = None;
+//     x
+// }
+// #[spec(ensures(true))]
+// fn bar() -> i32 {
+//     let x: i32 = 23;
+//     let y:i32 = 1002;
+//     let mut z:i32;
+//     let this_is_boolean = true;
+//
+//     if this_is_boolean {
+//         z = y/x;
+//     } else {
+//         z = x + 1;
+//     }
+//     z
+// }
+
+// //
+// #[spec(ensures(true))]
+// pub fn match_int() -> i32 {
+//     let x = 2;
+//     let a;
+//     match x {
+//         1..=5 => {
+//             a = x;
+//             //println!("Within range 1 to 5: {}", a);
+//         }
+//         6 | 8 | 10 => {
+//             a = x;
+//             //  println!("Even number smaller than 12: {}", a);
+//         }
+//         _ => {
+//             a = -1;
+//             //println!("Value Dropped!, User-defined error{}",a);
+//         }
+//     }
+//     a
+// }
