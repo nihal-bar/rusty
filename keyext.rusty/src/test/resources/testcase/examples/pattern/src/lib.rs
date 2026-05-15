@@ -13,35 +13,19 @@ fn match_wildcard() -> u32 {
     }
     x
 }
-#[spec(ensures(result == false))]
+#[spec(ensures(result == true))]
 pub fn match_bool_simple() -> bool {
     let x: i32 = 5;
     let mut res_string = false;
     match x {
         1..=5 => res_string = true,
-        90 => res_string = true,
+        90 => res_string = false,
         _ => res_string = false,
     }
     res_string
 }
 #[spec(ensures(result == true))]
 fn match_bool_complex() -> bool {
-    let x: i32 = 3;
-    let mut res = false;
-    match x {
-        // 0 => res = false,
-        1..=3 => match x {
-            // 2 => res = false,
-            _ => res = true,
-        },
-        _ => res = false,
-    }
-    res
-}
-
-
-#[spec(ensures(true))]
-fn match_bool_complex_2() -> bool {
     let x: i32 = 3;
     let mut res = false;
     match x {
@@ -53,18 +37,33 @@ fn match_bool_complex_2() -> bool {
     res
 }
 
-#[spec(ensures(true))]
-pub fn match_int_complex() -> i32 {
-    let x = 8;
+#[spec(ensures(result == 2))]
+fn match_int_simple() -> i32 {
+    let x = 2;
     let a;
     match x {
-        n if n < 0 => a = -100,
-        1..=5 => a = x,
-        6..=10 => a = x,
-        _ => a = -1,
+        1..=5 => { a = x; }
+        6 | 8 | 10 => { a = x; }
+        _ => { a = -1; }
     }
     a
 }
+
+#[spec(ensures(true))]
+fn match_int_complex() -> i32 {
+    // multiple arms including guards
+    let x = 8;
+    let mut a;
+    match x {
+        n if n < 0 => { a = -100; }
+        1..=5 => { a = x; }
+        n @ 6..=10 if n % 2 == 0 => { a = n; }
+        _ => { a = -1; }
+    }
+    a
+}
+
+
 
  // #[spec(ensures(true))]
  // fn match_ident_simple() -> i32 {
@@ -76,102 +75,13 @@ pub fn match_int_complex() -> i32 {
  //     }
  //     out
  // }
-// pub fn match_float(point: f32) -> f32{
-//     let res:f32;
-//     match point {
-//         f if f == 0.0 => res = f,
-//         f if f > 0.0 && f < 1.0 => {res = f; print!("fraction")},
-//         f if f.is_nan() =>{res = f; print!("not a number")},
-//         _ => {res = f32::MIN; print!("other float, saving as smallest showable number")}
-//     }
-//     res
-// }
 //
-// #[spec(ensures(true))]
-// pub fn match_char(c: char) -> &'static str {
-//     match c {
-//         'a'..='z' => "lowercase",
-//         'A'..='Z' => "uppercase",
-//         '0'..='9' => "digit",
-//         '\n' => "newline",
-//         '\t' => "tab",
-//         ' ' => "space",
-//         _ => "other char",
-//     }
-// }
+
 // pub enum Direction {
 //     Left,
 //     Right,
 //     Up,
 //     Down
-// }
-//
-// #[spec(ensures(true))]
-// pub fn match_enum_simple(dir: Direction) -> &'static str {
-//     let res_string;
-//     match dir {
-//         Direction::Left => {res_string = "left"},
-//         Direction::Right => {res_string = "right"},
-//         Direction::Up => {res_string = "up"},
-//         Direction::Down => {res_string = "down"}
-//         _ => {res_string = "other direction"}
-//     }
-//     res_string
-// }
-//
-//
-// pub enum Status { //enum with tuple input
-//     Pending,
-//     Active{priority:u8},
-//     Completed(String)
-// }
-//
-// #[spec(ensures(true))]
-// pub fn match_enum_with_vals(item: (Status, i32)){
-//     match item{
-//         (Status::Pending, count) if count > 100 =>
-//             {println!("Large Backlog!:{}",count);},
-//         (Status::Active {priority:  1 ..=3},_) =>
-//             {println!("High Prio Task");},
-//         (Status::Completed(ref msg),count) => {
-//             println!("Done: '{}', processed {} items", msg,count); },
-//         (Status,count) => {
-//             println!("Special case, count: {}",count);
-//         }
-//     }
-// }
-//
-// #[spec(ensures(true))]
-// fn match_deep_nested_tuple(data: (
-//     ((((((&str, i32), bool), f64), char), Vec<i32>), Option<String>),
-//     Result<u32, String>
-// )) -> String {
-//     match data {
-//         // The ONE positive path - 7 layers deep
-//         (
-//             (
-//                 (
-//                     (
-//                         (
-//                             (
-//                                 ("magic", 42),
-//                                 true
-//                             ),
-//                             3.14
-//                         ),
-//                         'X'
-//                     ),
-//                     vec
-//                 ),
-//                 Some(s)
-//             ),
-//             Ok(num)
-//         ) if vec.len() == 3 && s == "secret" && num > 100 => {
-//             "SUCCESS: All 7 layers matched!".to_string()
-//         }
-//         // Everything else fails
-//         _ => "FAIL".to_string()
-//     }
 // }
 //
 

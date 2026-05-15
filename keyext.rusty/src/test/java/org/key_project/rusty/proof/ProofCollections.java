@@ -96,7 +96,7 @@ public class ProofCollections {
       pat.provable("match_bool_simple.key");
 //        pat.provable("match_bool_complex.key");
 //        pat.provable("match_wildcard.key");
-        // pat.provable("match_int_simple.key");
+//         pat.provable("match_int_simple.key");
         // pat.provable("match_int_complex.key");
         // pat.provable("match_range_excl_simple.key");
         // pat.provable("match_range_excl_complex.key");
