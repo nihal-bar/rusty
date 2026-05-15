@@ -65,18 +65,30 @@ fn match_int_complex() -> i32 {
 
 
 
- // #[spec(ensures(true))]
- // fn match_ident_simple() -> i32 {
- //     let x = Some(3);
- //     let out;
- //     match x {
- //         Some(v) => out = v,
- //         None => out = -1,
- //     }
- //     out
- // }
-//
+ #[spec(ensures(true))]
+ fn match_ident_simple() -> i32 {
+     let count = 9;
+     match count {
+         e @ 0 => e,
+         n @ _ => n,
+     }
+ }
 
+#[spec(ensures(true))]
+fn match_ident_complex() -> i32 {
+    let count = 9;
+    let multiplier = 3;
+    match count {
+        e @ 0 => e * multiplier,            // returns 0
+        n @ 1..=5 if { let is_big = n * multiplier > 10; is_big } => n * 2,
+        m @ 6..=20 => {
+            let doubled = m * 2;
+            let added = doubled + multiplier;
+            added
+        }
+        other @ _ => other,
+    }
+}_
 // pub enum Direction {
 //     Left,
 //     Right,
