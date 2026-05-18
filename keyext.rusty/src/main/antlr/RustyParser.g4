@@ -727,6 +727,7 @@ rangePattern
    : rangeExclusivePattern
    | rangeInclusivePattern
    | rangeFromPattern
+   | rangeToExclusivePattern
    | rangeToInclusivePattern
    | obsoleteRangePattern
    ;
@@ -741,6 +742,10 @@ rangeInclusivePattern
 
 rangeFromPattern
    : rangePatternBound DOTDOT
+   ;
+
+rangeToExclusivePattern
+   : DOTDOT rangePatternBound
    ;
 
 rangeToInclusivePattern

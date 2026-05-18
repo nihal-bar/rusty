@@ -904,6 +904,8 @@ public class SchemaConverter {
             return convertRangeInclusivePattern(ctx.rangeInclusivePattern());
         if (ctx.rangeFromPattern() != null)
             return convertRangeFromPattern(ctx.rangeFromPattern());
+        if (ctx.rangeToExclusivePattern() != null)
+            return convertRangeToExclusivePattern(ctx.rangeToExclusivePattern());
         if (ctx.rangeToInclusivePattern() != null)
             return convertRangeToInclusivePattern(ctx.rangeToInclusivePattern());
         if (ctx.obsoleteRangePattern() != null)
@@ -927,6 +929,12 @@ public class SchemaConverter {
             RustySchemaParser.RangeFromPatternContext ctx) {
         return new RangePattern(convertRangePatternBound(ctx.rangePatternBound()),
             RangePattern.Bounds.Exclusive, null);
+    }
+
+    private Pattern convertRangeToExclusivePattern(
+            RustySchemaParser.RangeToExclusivePatternContext ctx) {
+        return new RangePattern(null,
+            RangePattern.Bounds.Exclusive, convertRangePatternBound(ctx.rangePatternBound()));
     }
 
     private Pattern convertRangeToInclusivePattern(
