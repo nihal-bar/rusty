@@ -69,7 +69,7 @@ fn match_int_complex() -> i32 {
  fn match_ident_simple() -> i32 {
      let count = 9;
      match count {
-         e @ 0 => e,
+        // e @ 0 => e,
          n @ _ => n,
      }
  }
@@ -88,7 +88,20 @@ fn match_ident_complex() -> i32 {
         }
         other @ _ => other,
     }
-}_
+}
+#[spec(ensures(true))]
+fn test_all_ranges() -> i32 {
+    let x:i32 = 44;
+    match x {
+        0..5 => 2,
+        5..=10 => 3,
+        11..20 => 4,
+        20.. => 5,
+        ..0 => 1,
+    }
+}
+
+
 // pub enum Direction {
 //     Left,
 //     Right,
@@ -97,13 +110,13 @@ fn match_ident_complex() -> i32 {
 // }
 //
 
-#[spec {
-    ensures(result)
-    }]
+#[spec(
+    ensures(result==true)
+)]
 fn simple_option(x: Option<i32>) -> bool {
     match x {
         Some(_) => true,
-        None => true
+        None => false,
     }
 }
 
