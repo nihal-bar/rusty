@@ -70,7 +70,7 @@ fn match_int_complex() -> i32 {
      let count = 9;
      match count {
         // e @ 0 => e,
-         n @ _ => n,
+         b => b,
      }
  }
 
@@ -79,14 +79,61 @@ fn match_ident_complex() -> i32 {
     let count = 9;
     let multiplier = 3;
     match count {
-        e @ 0 => e * multiplier,            // returns 0
-        n @ 1..=5 if { let is_big = n * multiplier > 10; is_big } => n * 2,
+        e @ 0 => e * multiplier,
         m @ 6..=20 => {
             let doubled = m * 2;
             let added = doubled + multiplier;
             added
         }
+        n @ 1..=5 if { let is_big = n * multiplier > 10; is_big } => n * 2,
         other @ _ => other,
+    }
+}
+
+#[spec(ensures(true))]
+fn match_range_exclusive_simple() -> i32 {
+    let x: i32 = 5;
+    match x {
+        99..1000 => 1,
+        1..10 => 2,
+        _ => 0,
+    }
+}
+
+#[spec(ensures(true))]
+fn match_range_inclusive_simple() -> i32 {
+    let x: i32 = 5;
+    match x {
+        1..=10 => 1,
+        _ => 0,
+    }
+}
+
+#[spec(ensures(true))]
+fn match_range_lowerbound_simple() -> i32 {
+    let x: i32 = 5;
+    match x {
+        15.. => 1,
+        10.. => 2,
+        2.. => 3,
+        _ => 0,
+    }
+}
+
+#[spec(ensures(true))]
+fn match_range_upper_exclusive_simple() -> i32 {
+    let x: i32 = 5;
+    match x {
+        ..10 => 1,
+        _ => 0,
+    }
+}
+#[spec(ensures(true))]
+fn match_range_upper_inclusive_simple() -> i32 {
+    let x: i32 = 5;
+    match x {
+        ..=10 => 1,
+        _ => 0,
     }
 }
 #[spec(ensures(true))]
@@ -100,7 +147,74 @@ fn test_all_ranges() -> i32 {
         ..0 => 1,
     }
 }
+#[spec(ensures(true))]
+fn match_range_exclusive_complex() -> i32 {
+    let x: i32 = 7;
+    match x {
+        1..5  => 10,
+        5..10 => 20,
+        10..20 => 30,
+        _ => 0,
+    }
+}
+#[spec(ensures(true))]
+fn match_range_inclusive_complex() -> i32 {
+    let x: i32 = 7;
+    match x {
+        1..=4  => 10,
+        5..=9  => 20,
+        10..=20 => 30,
+        _ => 0,
+    }
+}
+#[spec(ensures(true))]
+fn match_range_lowerbound_complex() -> i32 {
+    let x: i32 = 15;
+    match x {
+        ..5    => 10,
+        5..10  => 20,
+        10..   => 30,
+        _ => 0,
+    }
+}
+#[spec(ensures(true))]
+fn match_range_upper_exclusive_complex() -> i32 {
+    let x: i32 = 3;
+    match x {
+        ..5  => 10,
+        5..10 => 20,
+        _ => 0,
+    }
+}
+#[spec(ensures(true))]
+fn match_range_upper_inclusive_complex() -> i32 {
+    let x: i32 = 3;
+    match x {
+        ..=4  => 10,
+        5..=9 => 20,
+        _ => 0,
+    }
+}
+#[spec(ensures(true))]
+fn match_or_simple() -> i32 {
+    let x: i32 = 2;
+    match x {
+        1 | 2 => 1,
+        _ => 0,
+    }
+}
 
+#[spec(ensures(true))]
+fn match_or_complex() -> i32 {
+    let x: i32 = 3;
+    match x {
+        1 | 2       => 10,
+        3 | 4       => 20,
+        5 | 6 | 7   => 30,
+        8 | 9 | 10 | 11 => 40,
+        _ => 0,
+    }
+}
 
 // pub enum Direction {
 //     Left,
