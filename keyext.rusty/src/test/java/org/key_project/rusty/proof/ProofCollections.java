@@ -93,12 +93,12 @@ public class ProofCollections {
         // algos.provable("binary-search/binary-search.key");
 
         var pat = c.group("pattern");
-//        pat.provable("match_range_exclusive_simple.key");
-//        pat.provable("match_range_inclusive_simple.key");
-//        pat.provable("match_range_lowerbound_simple.key");
-//        pat.provable("match_range_upper_exclusive_simple.key");
-//        pat.provable("match_range_upper_inclusive_simple.key");
-        pat.provable("match_or_simple.key");
+        pat.provable("match_range_exclusive_simple.key");
+        pat.provable("match_range_inclusive_simple.key");
+        pat.provable("match_range_lowerbound_simple.key");
+        pat.provable("match_range_upper_exclusive_simple.key");
+        pat.provable("match_range_upper_inclusive_simple.key");
+//        pat.provable("match_or_simple.key");
 //        pat.provable("match_or_complex.key");
 
         // pat.provable("match_bool_simple.key");
