@@ -60,7 +60,8 @@ public class MatchExpression implements Expr {
 
     @Override
     public Type type(Services services) {
-        throw new UnsupportedOperationException();
+        // TODO: unify types
+        return ((MatchArm) arms.get(0)).body().type(services);
     }
 
     public Expr expr() {

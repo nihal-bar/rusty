@@ -93,13 +93,13 @@ public class ProofCollections {
         // algos.provable("binary-search/binary-search.key");
 
         var pat = c.group("pattern");
-//        pat.provable("match_range_exclusive_simple.key");
-//        pat.provable("match_range_inclusive_simple.key");
-//        pat.provable("match_range_lowerbound_simple.key");
-//        pat.provable("match_range_upper_exclusive_simple.key");
-//        pat.provable("match_range_upper_inclusive_simple.key");
+        // pat.provable("match_range_exclusive_simple.key");
+        // pat.provable("match_range_inclusive_simple.key");
+        // pat.provable("match_range_lowerbound_simple.key");
+        // pat.provable("match_range_upper_exclusive_simple.key");
+        // pat.provable("match_range_upper_inclusive_simple.key");
         pat.provable("match_or_simple.key");
-//        pat.provable("match_or_complex.key");
+        // pat.provable("match_or_complex.key");
 
         // pat.provable("match_bool_simple.key");
         // pat.provable("match_bool_complex.key");
@@ -107,13 +107,13 @@ public class ProofCollections {
         // pat.provable("match_int_simple.key");
         // pat.provable("match_int_complex.key");
         // pat.provable("match_ident_simple.key");
-//         pat.provable("match_ident_complex.key");
+        // pat.provable("match_ident_complex.key");
         // pat.provable("match_range_excl_simple.key");
         // pat.provable("match_range_excl_complex.key");
         // pat.provable("match_range_incl_simple.key");
         // pat.provable("match_range_incl_complex.key");
 
-//        pat.provable("test_all_ranges.key");
+        // pat.provable("test_all_ranges.key");
         // pat.provable("match_shadow_simple.key");
         // pat.provable("match_shadow_complex.key");
 
