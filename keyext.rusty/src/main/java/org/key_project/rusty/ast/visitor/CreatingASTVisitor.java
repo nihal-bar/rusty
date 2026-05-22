@@ -381,7 +381,7 @@ public abstract class CreatingASTVisitor extends RustyASTVisitor {
         DefaultAction def = new DefaultAction(x) {
             @Override
             RustyProgramElement createNewElement(ExtList changeList) {
-                return new RangePattern(changeList);
+                return new RangePattern(changeList, x.left() == null, x.right() == null);
             }
         };
         def.doAction(x);

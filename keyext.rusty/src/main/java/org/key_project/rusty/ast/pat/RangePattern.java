@@ -7,7 +7,9 @@ import java.util.Objects;
 
 import org.key_project.logic.SyntaxElement;
 import org.key_project.rusty.ast.RustyProgramElement;
+import org.key_project.rusty.ast.SourceData;
 import org.key_project.rusty.ast.visitor.Visitor;
+import org.key_project.rusty.rule.MatchConditions;
 import org.key_project.util.ExtList;
 
 import org.jspecify.annotations.NonNull;
@@ -32,16 +34,25 @@ public final class RangePattern
         this.right = right;
     }
 
-    public RangePattern(ExtList children) {
+    public RangePattern(ExtList children, boolean leftIsNull, boolean rightIsNull) {
         bounds = children.get(Bounds.class);
         var pats = children.collect(PatExpr.class);
         assert pats.length <= 2;
         if (pats.length == 2) {
+            assert !leftIsNull && !rightIsNull;
             left = pats[0];
             right = pats[1];
-        } else {
+        } else if (pats.length == 1 && leftIsNull) {
+            assert !rightIsNull;
             left = null;
             right = pats[0];
+        } else if (pats.length == 1 && rightIsNull) {
+            left = pats[0];
+            right = null;
+        } else {
+            assert pats.length == 0;
+            left = null;
+            right = null;
         }
 
     }
@@ -75,6 +86,22 @@ public final class RangePattern
         public void visit(Visitor v) {
             v.performActionOnRangePatternBounds(this);
         }
+
+        @Override
+        public @Nullable MatchConditions match(SourceData sourceData,
+                @Nullable MatchConditions mc) {
+            final var src = sourceData.getSource();
+            if (src == null)
+                return null;
+
+            if (src.getClass() != this.getClass()) {
+                return null;
+            }
+            if (this != src)
+                return null;
+            sourceData.next();
+            return mc;
+        }
     }
 
     @Override
@@ -83,7 +110,7 @@ public final class RangePattern
     }
 
     @Override
-    public SyntaxElement getChild(int n) {
+    public @NonNull SyntaxElement getChild(int n) {
         if (n == 0 && left != null)
             return left;
         if (left != null)
