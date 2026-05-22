@@ -20,18 +20,22 @@ import org.key_project.rusty.rule.inst.SVInstantiations;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public record SchemaVarPattern(boolean reference, boolean mut, OperatorSV operatorSV)
+public record SchemaVarPattern(boolean reference, boolean mut, OperatorSV operatorSV,
+        @Nullable Pattern opt)
         implements Pattern {
     @Override
     public @NonNull SyntaxElement getChild(int n) {
         if (n == 0)
             return operatorSV;
-        throw new IndexOutOfBoundsException("SchemaVarPattern has only one child");
+        if (n == 1 && opt != null)
+            return opt;
+        throw new IndexOutOfBoundsException(
+            "SchemaVarPattern has only " + getChildCount() + " children");
     }
 
     @Override
     public int getChildCount() {
-        return 1;
+        return opt == null ? 1 : 2;
     }
 
     @Override
@@ -51,6 +55,8 @@ public record SchemaVarPattern(boolean reference, boolean mut, OperatorSV operat
                     || bp.ref() && (mut() || !reference())) {
                 return null;
             }
+            if (src.getChildCount() != getChildCount())
+                return null;
         }
         if (sort == ProgramSVSort.VARIABLE) {
             mc = ((ProgramSV) operatorSV).match(new SourceData(src, 0, services), mc);
@@ -72,6 +78,9 @@ public record SchemaVarPattern(boolean reference, boolean mut, OperatorSV operat
             } else {
                 return null;
             }
+        }
+        if (opt != null) {
+            mc = opt.match(new SourceData(src, 1, services), mc);
         }
         source.next();
         return mc;
@@ -109,7 +118,7 @@ public record SchemaVarPattern(boolean reference, boolean mut, OperatorSV operat
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         var sb = new StringBuilder();
         if (reference) {
             sb.append("&");
@@ -117,6 +126,10 @@ public record SchemaVarPattern(boolean reference, boolean mut, OperatorSV operat
         if (mut)
             sb.append("mut ");
         sb.append(operatorSV);
+        if (opt != null) {
+            sb.append(" @ ");
+            sb.append(opt);
+        }
         return sb.toString();
     }
 }

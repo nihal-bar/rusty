@@ -574,19 +574,6 @@ public class PrettyPrinter implements Visitor {
     }
 
     @Override
-    public void performActionOnIdentPattern(IdentPattern x) {
-        if (x.isReference()) {
-            layouter.keyWord("ref");
-            layouter.print(" ");
-        }
-        if (x.isMutable()) {
-            layouter.keyWord("mut");
-            layouter.print(" ");
-        }
-        layouter.print(x.name().toString());
-    }
-
-    @Override
     public void performActionOnSchemaVarPattern(SchemaVarPattern x) {
 
     }

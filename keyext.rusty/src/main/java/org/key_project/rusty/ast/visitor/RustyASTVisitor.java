@@ -221,11 +221,6 @@ public abstract class RustyASTVisitor extends RustyASTWalker implements Visitor 
     }
 
     @Override
-    public void performActionOnIdentPattern(IdentPattern x) {
-        doDefaultAction(x);
-    }
-
-    @Override
     public void performActionOnSchemaVarPattern(SchemaVarPattern x) {
         doDefaultAction(x);
     }

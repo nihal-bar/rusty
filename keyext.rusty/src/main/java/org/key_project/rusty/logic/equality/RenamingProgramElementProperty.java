@@ -13,7 +13,6 @@ import org.key_project.logic.SyntaxElementCursor;
 import org.key_project.rusty.ast.Identifier;
 import org.key_project.rusty.ast.RustyProgramElement;
 import org.key_project.rusty.ast.pat.BindingPattern;
-import org.key_project.rusty.ast.pat.IdentPattern;
 import org.key_project.rusty.logic.NameAbstractionTable;
 import org.key_project.rusty.logic.op.ProgramVariable;
 
@@ -104,10 +103,10 @@ public class RenamingProgramElementProperty implements Property<RustyProgramElem
             // First node can never be null as cursor is initialized with 'this'
             next = c.getCurrentNode();
             // Handle special cases so that hashCodeModThisProperty follows equalsModThisProperty
-            if (next instanceof IdentPattern ip) {
-                hashCode = 31 * hashCode + (ip.isMutable() ? 1 : 0);
-                hashCode = 31 * hashCode + (ip.isReference() ? 1 : 0);
-                absMap.add(ip.name());
+            if (next instanceof BindingPattern bp) {
+                hashCode = 31 * hashCode + (bp.mut() ? 1 : 0);
+                hashCode = 31 * hashCode + (bp.ref() ? 1 : 0);
+                absMap.add(bp.pv().name());
             } else if (next instanceof ProgramVariable || next instanceof Identifier) {
                 Name name =
                     next instanceof ProgramVariable pv ? pv.name() : ((Identifier) next).name();

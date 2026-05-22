@@ -85,8 +85,6 @@ public interface Visitor {
 
     void performActionOnLetStatement(LetStatement x);
 
-    void performActionOnIdentPattern(IdentPattern x);
-
     void performActionOnSchemaVarPattern(SchemaVarPattern x);
 
     void performActionOnLiteralPattern(LiteralPattern x);

@@ -865,6 +865,10 @@ public class SchemaConverter {
             if (pat.identifierPattern() != null) {
                 boolean reference = pat.identifierPattern().KW_REF() != null;
                 boolean mutable = pat.identifierPattern().KW_MUT() != null;
+                Pattern inner = null;
+                if (pat.identifierPattern().pattern() != null) {
+                    inner = convertPattern(pat.identifierPattern().pattern());
+                }
                 if (pat.identifierPattern().identifier() != null) {
                     var ident = convertIdentifier(pat.identifierPattern().identifier());
                     ProgramVariable pv;
@@ -881,10 +885,11 @@ public class SchemaConverter {
                     } else {
                         pv = getProgramVariable(ident);
                     }
-                    return new IdentPattern(reference, mutable, pv);
+
+                    return new BindingPattern(reference, mutable && reference, mutable, pv, inner);
                 }
                 return new SchemaVarPattern(reference, mutable, lookupSchemaVariable(
-                    pat.identifierPattern().schemaVariable().getText().substring(2)));
+                    pat.identifierPattern().schemaVariable().getText().substring(2)), inner);
             }
             if (pat.wildcardPattern() != null) {
                 return WildCardPattern.WILDCARD;
